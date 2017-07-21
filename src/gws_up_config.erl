@@ -250,7 +250,7 @@ get_mer_list() ->
 get_up_public_key() ->
   PublicKeyFileName = xfutils:get_filename([home, priv_dir, up_keys_dir, up_public_key_file]),
   lager:debug("PublicKeyFileName = ~p", [PublicKeyFileName]),
-  {ok, PublicKey} = xfutils:load_public_key(PublicKeyFileName),
+  PublicKey = xfutils:load_public_key(PublicKeyFileName),
   PublicKey.
 
 do_get_config(public_key, #state{public_key = PublicKey} = State) when is_record(State, state) ->
@@ -265,7 +265,7 @@ load_private_key(MerId) when is_atom(MerId) ->
   KeyFileName = list_to_binary([KeyPath, MerIdBin, ".key"]),
   lager:debug("private key file name = ~p", [KeyFileName]),
   {ok, Pwd} = application:get_env(private_key_default_pwd),
-  {ok, PrivateKey} = xfutils:load_private_key(KeyFileName, Pwd),
+  PrivateKey = xfutils:load_private_key(KeyFileName, Pwd),
   PrivateKey.
 
 get_bank_dict() ->
