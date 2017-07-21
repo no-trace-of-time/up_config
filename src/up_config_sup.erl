@@ -15,12 +15,13 @@
 
 -define(SERVER, ?MODULE).
 
+
 %%====================================================================
 %% API functions
 %%====================================================================
 
 start_link() ->
-    supervisor:start_link({local, ?SERVER}, ?MODULE, []).
+  supervisor:start_link({local, ?SERVER}, ?MODULE, []).
 
 %%====================================================================
 %% Supervisor callbacks
@@ -28,8 +29,22 @@ start_link() ->
 
 %% Child :: {Id,StartFunc,Restart,Shutdown,Type,Modules}
 init([]) ->
-    {ok, { {one_for_all, 0, 1}, []} }.
+  Children = [
+    xfutils:child_spec(gws_up_config)
+  ],
+  RestartStrategy = xfutils:sup_restart_strategy(),
+  {ok, {RestartStrategy, Children}}.
 
 %%====================================================================
 %% Internal functions
 %%====================================================================
+
+
+
+
+
+
+
+
+
+

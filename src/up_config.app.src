@@ -1,16 +1,100 @@
 {application, up_config,
- [{description, "An OTP application"},
-  {vsn, "0.1.0"},
-  {registered, []},
-  {mod, { up_config_app, []}},
-  {applications,
-   [kernel,
-    stdlib
-   ]},
-  {env,[]},
-  {modules, []},
+  [{description, "unionpay related parameter config server"},
+    {vsn, "0.1.0"},
+    {registered, []},
+    {mod, {up_config, []}},
+    {applications,
+      [kernel,
+        stdlib
+        , lager
+      ]},
+    {env, [
+      {netbank_only_list_all,
+        [
+          'ICBC'
+          , 'ABC'
+          , 'BOC'
+          , 'BOCSH'
+          , 'CCB'
+%%          , 'CMB'
+          , 'SPDB'
+          , 'GDB'
+          , 'BOCOM'
+          , 'CNCB'
+          , 'CMBC'
+          , 'CIB'
+          , 'CEB'
+          , 'HXB'
+          , 'BOS'
+          , 'SPCB'
+          , 'PSBC'
+          , 'BCCB'
+          , 'BRCB'
+          , 'PAB'
 
-  {maintainers, []},
-  {licenses, ["Apache 2.0"]},
-  {links, []}
- ]}.
+          %% debit only
+          , 'ICBCD'
+          , 'ABCD'
+          , 'CCBD'
+%%          , 'CMBD'
+          , 'SPDBD'
+          , 'GDBD'
+          , 'CMBCD'
+          , 'CEBD'
+          , 'HXB'
+          , 'PSBCD'
+          , 'BOEAD'
+        ]
+      }
+      , {netbank_only_list_shanghai,
+        [
+
+          'BOC'
+          , 'CCB'
+          , 'BOS'
+          , 'BCCB'
+        ]}
+      , {channel_type_netbank, <<"08">>}
+      , {channel_type_wap, <<"07">>}
+      , {private_key_default_pwd, "111111"}
+
+      , {priv_dir, "/priv"}
+      , {up_keys_dir, "/keys"}
+      , {up_public_key_file, "acp.pem"}
+      , {up_mer_list,
+        [
+          {gw_netbank, ['898319849000018']}
+          , {gw_netbank_only, ['898319849000018']}
+          , {gw_wap, ['898319849000019']}
+          , {gw_netbank_dzgas, ['898319849000027']}
+          , {gw_netbank_only_dzgas, ['898319849000027']}
+          , {gw_wap_dzgas, ['898319849000028']}
+        ]}
+      , {ums_default_mer_list,
+        [
+          {gw_netbank, ['898319849000018']}
+          , {gw_netbank_only, ['898319849000018']}
+          , {gw_wap, ['898319849000019']}
+          , {gw_netbank_dzgas, ['898319849000027']}
+          , {gw_netbank_only_dzgas, ['898319849000027']}
+          , {gw_wap_dzgas, ['898319849000028']}
+        ]}
+      , {up_mer_props,
+        #{
+          '898319849000018' => #{channelType=><<"08">>, certId => <<"70481187397">>}
+          , '898319849000019' => #{channelType=><<"07">>, certId => <<"70469027189">>}
+          , '898319849000027' => #{channelType=><<"08">>, certId => <<"‭73119901525‬">>}
+          , '898319849000028' => #{channelType=><<"07">>, certId => <<"‭73119902008‬">>}
+        }}
+
+    ]},
+    {modules, [
+      up_config
+      , up_config_sup
+      , gws_up_config
+    ]},
+
+    {maintainers, []},
+    {licenses, ["Apache 2.0"]},
+    {links, []}
+  ]}.
