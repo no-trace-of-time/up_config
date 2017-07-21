@@ -254,7 +254,10 @@ get_up_public_key() ->
   PublicKey.
 
 do_get_config(public_key, #state{public_key = PublicKey} = State) when is_record(State, state) ->
-  PublicKey.
+  PublicKey;
+do_get_config(Key, _) when is_atom(Key) ->
+  {ok, Value} = application:get_env(Key),
+  Value.
 
 load_private_key(MerId) when is_atom(MerId) ->
   MerIdBin = atom_to_binary(MerId, utf8),
