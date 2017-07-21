@@ -10,6 +10,7 @@
 %%% Created : 20. 七月 2017 9:02
 %%%-------------------------------------------------------------------
 -module(gws_up_config).
+-include_lib("eunit/include/eunit.hrl").
 -author("simon").
 
 -behaviour(gen_server).
@@ -31,12 +32,13 @@
   , get_mer_id_default/1
   , get_mer_prop/2
   , get_config/1
+  , check_bank_id/1
 
 ]).
 
 -define(SERVER, ?MODULE).
 
--record(state, {parameters_map, mer_router_map, mer_list_map, public_key}).
+-record(state, {bank_id_dict, mer_router_map, mer_list_map, public_key}).
 
 -compile(export_all).
 
@@ -59,6 +61,9 @@ get_mer_prop(MerId, Key) when is_atom(MerId),
 
 get_config(Key) when is_atom(Key) ->
   gen_server:call(?SERVER, {get_config, Key}).
+
+check_bank_id(BankId) when is_atom(BankId) ->
+  gen_server:call(?SERVER, {check_bank_id, BankId}).
 %%--------------------------------------------------------------------
 %% @doc
 %% Starts the server
@@ -90,7 +95,7 @@ start_link() ->
   {stop, Reason :: term()} | ignore).
 init([]) ->
   State = #state{
-    parameters_map = get_env()
+    bank_id_dict = get_bank_dict()
     , mer_router_map = get_route()
     , mer_list_map = get_mer_list()
     , public_key = get_up_public_key()
@@ -130,6 +135,15 @@ handle_call({get_mer_prop, MerId, Key}, _From, #state{mer_list_map = MerListMap}
   {reply, Value, State};
 handle_call({get_config, Key}, _From, State) ->
   Return = do_get_config(Key, State),
+  {reply, Return, State};
+handle_call({check_bank_id, BankId}, _From, #state{bank_id_dict = BankIdDict} = State) ->
+  Return = case dict:is_key(BankId, BankIdDict) of
+             true ->
+               ok;
+             false ->
+               error
+
+           end,
   {reply, Return, State};
 handle_call(_Request, _From, State) ->
   {reply, ok, State}.
@@ -237,3 +251,25 @@ load_private_key(MerId) when is_atom(MerId) ->
   {ok, Pwd} = application:get_env(private_key_default_pwd),
   {ok, PrivateKey} = xfutils:load_private_key(KeyFileName, Pwd),
   PrivateKey.
+
+get_bank_dict() ->
+  {ok, BankIdList} = application:get_env(netbank_only_list_all),
+  BankIdDict = new_bankid_dict(BankIdList),
+  BankIdDict.
+
+new_bankid_dict(BankIdList) when is_list(BankIdList) ->
+  F = fun
+        (BankId, Acc) ->
+          [{BankId, ok} | Acc]
+      end,
+
+  BankIdPairList = lists:foldl(F, [], BankIdList),
+
+  dict:from_list(BankIdPairList).
+
+new_bankid_dict_test() ->
+  BankIdList = ['AAA', 'BBB'],
+  Dict = new_bankid_dict(BankIdList),
+  List = dict:to_list(Dict),
+  ?assertEqual([{'AAA', ok}, {'BBB', ok}], List),
+  ok.
