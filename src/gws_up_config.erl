@@ -234,10 +234,14 @@ get_route() ->
 
 get_mer_list() ->
   {ok, MerPropsMap} = application:get_env(up_mer_props),
+%%  lager:debug("maps origal = ~p", [MerPropsMap]),
   F = fun
         (MerId, PropMap) when is_atom(MerId), is_map(PropMap) ->
+%%          lager:debug("maps origal = ~p", [PropMap]),
           PrivateKey = load_private_key(MerId),
-          maps:put(privateKey, PrivateKey, PropMap)
+          MapsRet = maps:put(privateKey, PrivateKey, PropMap),
+%%          lager:debug("maps with pk = ~p", [MapsRet]),
+          MapsRet
       end,
   MerPropsMapWithPK = maps:map(F, MerPropsMap),
   MerPropsMapWithPK.

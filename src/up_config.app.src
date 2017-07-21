@@ -83,10 +83,15 @@
         #{
           '898319849000018' => #{channelType=><<"08">>, certId => <<"70481187397">>}
           , '898319849000019' => #{channelType=><<"07">>, certId => <<"70469027189">>}
-          , '898319849000027' => #{channelType=><<"08">>, certId => <<"‭73119901525‬">>}
-          , '898319849000028' => #{channelType=><<"07">>, certId => <<"‭73119902008‬">>}
-          , 'test' => #{channelType=><<"07">>, certId => <<"‭73119902008‬">>}
+          , '898319849000027' => #{channelType=><<"08">>, certId => <<"73119901525">>}
+          , '898319849000028' => #{channelType=><<"07">>, certId => <<"73119902008‬">>}
+          , 'test' => #{channelType=><<"07">>, certId => <<"73119902008‬">>}
         }}
+      , {up_front_url, "http://localhost:8888/pg/pay_succ"}
+      , {up_back_url, "http://localhost:8888/pg/pay_succ_info"}
+      , {test_mcht_front_url, "http://localhost:8888/pg/mcht_front_succ"}
+      , {test_mcht_back_url, "http://localhost:8888/pg/mcht_back_succ_info"}
+
 
     ]},
     {modules, [
