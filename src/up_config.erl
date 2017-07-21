@@ -42,9 +42,11 @@ get_mer_id_default(PaymentType) when is_atom(PaymentType) ->
 
 %%--------------------------------------------------------------------
 -spec get_mer_prop(MerId, Key) -> any() when
-  MerId :: atom(),
+  MerId :: atom()| binary(),
   Key :: mer_prop_keys().
 
+get_mer_prop(MerId, Key) when is_binary(MerId) ->
+  get_mer_prop(binary_to_atom(MerId, utf8), Key);
 get_mer_prop(MerId, Key) when is_atom(MerId),
   (Key =:= channelType orelse
     Key =:= certId orelse
