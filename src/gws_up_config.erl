@@ -52,7 +52,7 @@ get_mer_id_default(PaymentType) when is_atom(PaymentType) ->
 get_mer_prop(MerId, Key) when is_atom(MerId),
   (Key =:= channelType orelse
     Key =:= certId orelse
-    Key =:= private_key
+    Key =:= privateKey
   )
   ->
   gen_server:call(?SERVER, {get_mer_prop, MerId, Key}).
@@ -214,7 +214,7 @@ get_mer_list() ->
   F = fun
         (MerId, PropMap) when is_atom(MerId), is_map(PropMap) ->
           PrivateKey = load_private_key(MerId),
-          maps:put(private_key, PrivateKey, PropMap)
+          maps:put(privateKey, PrivateKey, PropMap)
       end,
   MerPropsMapWithPK = maps:map(F, MerPropsMap),
   MerPropsMapWithPK.

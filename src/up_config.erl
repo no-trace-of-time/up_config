@@ -21,6 +21,9 @@
 
 ]).
 
+-type mer_prop_keys() :: certId|channelType | privateKey.
+-export_type([mer_prop_keys/0]).
+
 %%--------------------------------------------------------------------
 start(_StartType, _StartArgs) ->
   up_config_sup:start_link().
@@ -35,10 +38,15 @@ get_mer_id(PaymentType) when is_atom(PaymentType) ->
 get_mer_id_default(PaymentType) when is_atom(PaymentType) ->
   gws_up_config:get_mer_id_default(PaymentType).
 
+%%--------------------------------------------------------------------
+-spec get_mer_prop(MerId, Key) -> any() when
+  MerId :: atom(),
+  Key :: mer_prop_keys().
+
 get_mer_prop(MerId, Key) when is_atom(MerId),
   (Key =:= channelType orelse
     Key =:= certId orelse
-    Key =:= private_key
+    Key =:= privateKey
   )
   ->
   gws_up_config:get_mer_prop(MerId, Key).
