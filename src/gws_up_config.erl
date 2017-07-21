@@ -38,6 +38,7 @@
 ]).
 
 -define(SERVER, ?MODULE).
+-define(MER_ID_TEST, <<"test">>).
 
 -record(state, {bank_id_dict, mer_router_map, mer_list_map, public_key}).
 
@@ -152,7 +153,7 @@ handle_call({check_bank_id, BankId}, _From, #state{bank_id_dict = BankIdDict} = 
 handle_call({get_all_mer}, _From, #state{mer_list_map = MerListMap} = State) ->
   MerAtomList = maps:keys(MerListMap),
   MerList = lists:map(fun(MerIdAtom) -> atom_to_binary(MerIdAtom, utf8) end, MerAtomList),
-  {reply, MerList, State};
+  {reply, lists:delete(?MER_ID_TEST, MerList), State};
 handle_call(_Request, _From, State) ->
   {reply, ok, State}.
 
