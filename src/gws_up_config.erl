@@ -33,6 +33,7 @@
   , get_mer_prop/2
   , get_config/1
   , check_bank_id/1
+  , get_all_mer/0
 
 ]).
 
@@ -64,6 +65,9 @@ get_config(Key) when is_atom(Key) ->
 
 check_bank_id(BankId) when is_atom(BankId) ->
   gen_server:call(?SERVER, {check_bank_id, BankId}).
+
+get_all_mer() ->
+  gen_server:call(?SERVER, {get_all_mer}).
 %%--------------------------------------------------------------------
 %% @doc
 %% Starts the server
@@ -145,6 +149,10 @@ handle_call({check_bank_id, BankId}, _From, #state{bank_id_dict = BankIdDict} = 
 
            end,
   {reply, Return, State};
+handle_call({get_all_mer}, _From, #state{mer_list_map = MerListMap} = State) ->
+  MerAtomList = maps:keys(MerListMap),
+  MerList = lists:map(fun(MerIdAtom) -> atom_to_binary(MerIdAtom, utf8) end, MerAtomList),
+  {reply, MerList, State};
 handle_call(_Request, _From, State) ->
   {reply, ok, State}.
 

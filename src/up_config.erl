@@ -19,6 +19,7 @@
   , get_mer_prop/2
   , get_config/1
   , check_bank_id/2
+  , get_mer_list/0
 
 ]).
 
@@ -69,6 +70,9 @@ check_bank_id(gw_wap, _BankId) ->
 check_bank_id(gw_netbank_only, BankIdBin) when is_binary(BankIdBin) ->
   BankId = binary_to_existing_atom(BankIdBin, utf8),
   gws_up_config:check_bank_id(BankId).
+
+get_mer_list() ->
+  gws_up_config:get_all_mer().
 
 %%====================================================================
 %% Internal functions
