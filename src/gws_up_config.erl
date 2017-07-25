@@ -143,8 +143,8 @@ handle_call({get_config, Key}, _From, State) ->
   {reply, Return, State};
 handle_call({check_payment_method, PaymentType, BankId, CardNo},
     _From,
-    #state{mer_list_map = MerMap, bank_id_dict = BankIdDict} = State) ->
-  {PaymentMethod, _} = maps:get(PaymentType, MerMap),
+    #state{mer_router_map = MerRouterMap, bank_id_dict = BankIdDict} = State) ->
+  {PaymentMethod, _} = maps:get(PaymentType, MerRouterMap),
   Return = do_check_payment_method(PaymentMethod, {BankId, BankIdDict}, CardNo),
 
   {reply, Return, State};
