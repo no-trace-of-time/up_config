@@ -70,21 +70,23 @@
           , {gw_netbank_only_dzgas, ['898319849000027']}
           , {gw_wap_dzgas, ['898319849000028']}
         ]}
-      , {ums_default_mer_list,
-        [
-          {gw_netbank, ['898319849000018']}
-          , {gw_netbank_only, ['898319849000018']}
-          , {gw_wap, ['898319849000019']}
-          , {gw_netbank_dzgas, ['898319849000027']}
-          , {gw_netbank_only_dzgas, ['898319849000027']}
-          , {gw_wap_dzgas, ['898319849000028']}
-        ]}
+%%      , {ums_default_mer_list,
+%%        [
+%%          {gw_netbank, ['898319849000018']}
+%%          , {gw_netbank_only, ['898319849000018']}
+%%          , {gw_wap, ['898319849000019']}
+%%          , {gw_netbank_dzgas, ['898319849000027']}
+%%          , {gw_netbank_only_dzgas, ['898319849000027']}
+%%          , {gw_wap_dzgas, ['898319849000028']}
+%%        ]}
       , {up_mer_props,
         #{
           '898319849000018' => #{channelType=><<"08">>, certId => <<"70481187397">>}
           , '898319849000019' => #{channelType=><<"07">>, certId => <<"70469027189">>}
           , '898319849000027' => #{channelType=><<"08">>, certId => <<"73119901525">>}
           , '898319849000028' => #{channelType=><<"07">>, certId => <<"73119902008‬">>}
+          , '898350249000232' => #{channelType=><<"07">>, certId => <<"69567322262‬">>}
+          , '898350249000234' => #{channelType=><<"08">>, certId => <<"69567322259 ‬">>}
           , 'test' => #{channelType=><<"07">>, certId => <<"73119902008‬">>}
         }}
       , {up_front_url, "http://localhost:8888/pg/pay_succ"}
