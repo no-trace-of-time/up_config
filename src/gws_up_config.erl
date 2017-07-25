@@ -32,7 +32,7 @@
   , get_mer_id_default/1
   , get_mer_prop/2
   , get_config/1
-  , check_bank_id/1
+  , check_payment_method/3
   , get_all_mer/0
 
 ]).
@@ -64,8 +64,8 @@ get_mer_prop(MerId, Key) when is_atom(MerId),
 get_config(Key) when is_atom(Key) ->
   gen_server:call(?SERVER, {get_config, Key}).
 
-check_bank_id(BankId) when is_atom(BankId) ->
-  gen_server:call(?SERVER, {check_bank_id, BankId}).
+check_payment_method(PaymentType, BankId, CardNo) when is_atom(PaymentType) ->
+  gen_server:call(?SERVER, {check_payment_method, PaymentType, BankId, CardNo}).
 
 get_all_mer() ->
   gen_server:call(?SERVER, {get_all_mer}).
@@ -125,13 +125,13 @@ init([]) ->
   {stop, Reason :: term(), NewState :: #state{}}).
 handle_call({get_mer_id, PaymentType}, _From, #state{mer_router_map = MerRouteMap} = State)
   when is_atom(PaymentType) ->
-  MerList = maps:get(PaymentType, MerRouteMap),
+  {_, MerList} = maps:get(PaymentType, MerRouteMap),
   UpMerId = lists:nth(rand:uniform(length(MerList)), MerList),
   {reply, UpMerId, State};
 handle_call({get_mer_id_default, PaymentType}, _From, #state{mer_router_map = MerRouteMap} = State)
   when is_atom(PaymentType) ->
   %% get the first mer in the list
-  [UpMerIdDefault | _] = maps:get(PaymentType, MerRouteMap),
+  {_, [UpMerIdDefault | _]} = maps:get(PaymentType, MerRouteMap),
   {reply, UpMerIdDefault, State};
 handle_call({get_mer_prop, MerId, Key}, _From, #state{mer_list_map = MerListMap} = State)
   when is_atom(Key) ->
@@ -141,14 +141,12 @@ handle_call({get_mer_prop, MerId, Key}, _From, #state{mer_list_map = MerListMap}
 handle_call({get_config, Key}, _From, State) ->
   Return = do_get_config(Key, State),
   {reply, Return, State};
-handle_call({check_bank_id, BankId}, _From, #state{bank_id_dict = BankIdDict} = State) ->
-  Return = case dict:is_key(BankId, BankIdDict) of
-             true ->
-               ok;
-             false ->
-               error
+handle_call({check_payment_method, PaymentType, BankId, CardNo},
+    _From,
+    #state{mer_list_map = MerMap, bank_id_dict = BankIdDict} = State) ->
+  {PaymentMethod, _} = maps:get(PaymentType, MerMap),
+  Return = do_check_payment_method(PaymentMethod, {BankId, BankIdDict}, CardNo),
 
-           end,
   {reply, Return, State};
 handle_call({get_all_mer}, _From, #state{mer_list_map = MerListMap} = State) ->
   MerAtomList = maps:keys(MerListMap),
@@ -259,6 +257,7 @@ do_get_config(Key, _) when is_atom(Key) ->
   {ok, Value} = application:get_env(Key),
   Value.
 
+%%--------------------------------------------------------------------
 load_private_key(MerId) when is_atom(MerId) ->
   MerIdBin = atom_to_binary(MerId, utf8),
   KeyPath = xfutils:get_path([home, priv_dir, up_keys_dir]),
@@ -268,6 +267,7 @@ load_private_key(MerId) when is_atom(MerId) ->
   PrivateKey = xfutils:load_private_key(KeyFileName, Pwd),
   PrivateKey.
 
+%%--------------------------------------------------------------------
 get_bank_dict() ->
   {ok, BankIdList} = application:get_env(netbank_only_list_all),
   BankIdDict = new_bankid_dict(BankIdList),
@@ -288,4 +288,97 @@ new_bankid_dict_test() ->
   Dict = new_bankid_dict(BankIdList),
   List = dict:to_list(Dict),
   ?assertEqual([{'AAA', ok}, {'BBB', ok}], List),
+  ok.
+
+%%--------------------------------------------------------------------
+do_check_payment_method(wap, _, _) ->
+  ok;
+do_check_payment_method(netbank, {Undefined, _}, _)
+  when (Undefined =:= <<>>)
+  or (Undefined =:= undefined) ->
+  ok;
+do_check_payment_method(netbank, {BankId, _}, _)
+  when is_binary(BankId) ->
+  error_bank_id_not_allowed;
+
+do_check_payment_method(netbank_only, {BankId, BankIdDict}, CardNo)
+  when is_binary(BankId) ->
+
+  try
+
+    BankIdAtom = binary_to_existing_atom(BankId, utf8),
+
+    case dict:is_key(BankIdAtom, BankIdDict) of
+      true ->
+        case CardNo of
+          <<>> ->
+            ok;
+          undefined ->
+            ok;
+          _ ->
+            error_card_no_not_allowed
+        end;
+      false ->
+        error_bank_id_error
+
+    end
+
+  catch
+    _:_ ->
+      error_bank_id_error
+
+  end.
+
+
+do_check_payment_method_test() ->
+  BankIdList = [
+    'ICBC'
+    , 'ABC'
+    , 'BOC'
+    , 'BOCSH'
+    , 'CCB'
+%%          , 'CMB'
+    , 'SPDB'
+    , 'GDB'
+    , 'BOCOM'
+    , 'CNCB'
+    , 'CMBC'
+    , 'CIB'
+    , 'CEB'
+    , 'HXB'
+    , 'BOS'
+    , 'SPCB'
+    , 'PSBC'
+    , 'BCCB'
+    , 'BRCB'
+    , 'PAB'
+
+%% debit only
+    , 'ICBCD'
+    , 'ABCD'
+    , 'CCBD'
+%%          , 'CMBD'
+    , 'SPDBD'
+    , 'GDBD'
+    , 'CMBCD'
+    , 'CEBD'
+    , 'HXB'
+    , 'PSBCD'
+    , 'BOEAD'
+  ],
+  BankIdDict = new_bankid_dict(BankIdList),
+
+  ?assertEqual(ok, do_check_payment_method(wap, {<<"ICBC">>, undefined}, <<"xxx">>)),
+
+  ?assertEqual(ok, do_check_payment_method(netbank, {<<>>, undefined}, <<"xxx">>)),
+  ?assertEqual(ok, do_check_payment_method(netbank, {undefined, undefined}, <<"xxx">>)),
+  ?assertEqual(error_bank_id_not_allowed, do_check_payment_method(netbank, {<<"ICBC">>, undefined}, <<"xxx">>)),
+
+  ?assertEqual(ok, do_check_payment_method(netbank_only, {<<"ICBC">>, BankIdDict}, undefined)),
+  ?assertEqual(error_bank_id_error, do_check_payment_method(netbank_only, {<<"ICBD">>, BankIdDict}, <<"xxx">>)),
+  ?assertEqual(ok, do_check_payment_method(netbank_only, {<<"ICBC">>, BankIdDict}, <<>>)),
+  ?assertEqual(ok, do_check_payment_method(netbank_only, {<<"ICBC">>, BankIdDict}, undefined)),
+  ?assertEqual(error_card_no_not_allowed, do_check_payment_method(netbank_only, {<<"ICBC">>, BankIdDict}, <<"xxx">>)),
+
+
   ok.

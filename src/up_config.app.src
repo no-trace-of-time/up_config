@@ -63,22 +63,16 @@
       , {up_public_key_file, "acp.pem"}
       , {up_mer_list,
         [
-          {gw_netbank, ['898319849000018']}
-          , {gw_netbank_only, ['898319849000018']}
-          , {gw_wap, ['898319849000019']}
-          , {gw_netbank_dzgas, ['898319849000027']}
-          , {gw_netbank_only_dzgas, ['898319849000027']}
-          , {gw_wap_dzgas, ['898319849000028']}
+          {gw_netbank, {netbank,['898319849000018']}}
+          , {gw_netbank_only, {netbank_only,['898319849000018']}}
+          , {gw_wap, {wap,['898319849000019']}}
+          , {gw_netbank_dzgas, {netbank,['898319849000027']}}
+          , {gw_netbank_only_dzgas, {netbank_only,['898319849000027']}}
+          , {gw_wap_dzgas, {wap,['898319849000028']}}
+          , {gw_netbank_trustone, {netbank,['898350249000234']}}
+          , {gw_netbank_only_trustone, {netbank_only,['898350249000234']}}
+          , {gw_wap_trustone, {wap,['898350249000232']}}
         ]}
-%%      , {ums_default_mer_list,
-%%        [
-%%          {gw_netbank, ['898319849000018']}
-%%          , {gw_netbank_only, ['898319849000018']}
-%%          , {gw_wap, ['898319849000019']}
-%%          , {gw_netbank_dzgas, ['898319849000027']}
-%%          , {gw_netbank_only_dzgas, ['898319849000027']}
-%%          , {gw_wap_dzgas, ['898319849000028']}
-%%        ]}
       , {up_mer_props,
         #{
           '898319849000018' => #{channelType=><<"08">>, certId => <<"70481187397">>}

@@ -18,7 +18,7 @@
   , get_mer_id_default/1
   , get_mer_prop/2
   , get_config/1
-  , check_bank_id/2
+  , check_payment_method/3
   , get_mer_list/0
 
 ]).
@@ -58,21 +58,17 @@ get_mer_prop(MerId, Key) when is_atom(MerId),
 get_config(Key) when is_atom(Key) ->
   gws_up_config:get_config(Key).
 
-check_bank_id(gw_netbank, undefined) ->
-  ok;
-check_bank_id(gw_netbank, <<>>) ->
-  ok;
-check_bank_id(gw_netbank, _) ->
-  %% not allow bank_id for gw_netbank
-  %% tempory for minsheng huidong merchant
-  %% only allow minsheng
-  error;
-check_bank_id(gw_wap, _BankId) ->
-  ok;
-check_bank_id(gw_netbank_only, BankIdBin) when is_binary(BankIdBin) ->
-  BankId = binary_to_existing_atom(BankIdBin, utf8),
-  gws_up_config:check_bank_id(BankId).
+%%--------------------------------------------------------------------
+-spec check_payment_method(PaymentType, BankIdBin, CardNo) -> Result when
+  PaymentType :: atom(),
+  BankIdBin :: binary()| undefined,
+  CardNo :: binary()| undefined,
+  Result :: ok| error.
 
+check_payment_method(PaymentType, BankIdBin, CardNo) when is_atom(PaymentType) ->
+  gws_up_config:check_payment_method(PaymentType, BankIdBin, CardNo).
+
+%%--------------------------------------------------------------------
 get_mer_list() ->
   gws_up_config:get_all_mer().
 
