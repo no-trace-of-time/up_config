@@ -20,6 +20,7 @@
   , get_config/1
   , check_payment_method/3
   , get_mer_list/0
+  , get_mer_id_map/0
 
 ]).
 
@@ -71,6 +72,10 @@ check_payment_method(PaymentType, BankIdBin, CardNo) when is_atom(PaymentType) -
 %%--------------------------------------------------------------------
 get_mer_list() ->
   gws_up_config:get_all_mer().
+
+%%--------------------------------------------------------------------
+get_mer_id_map() ->
+  gws_up_config:get_mer_id_map().
 
 %%====================================================================
 %% Internal functions

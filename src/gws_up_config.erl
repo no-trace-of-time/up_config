@@ -34,6 +34,7 @@
   , get_config/1
   , check_payment_method/3
   , get_all_mer/0
+  , get_mer_id_map/0
 
 ]).
 
@@ -69,6 +70,10 @@ check_payment_method(PaymentType, BankId, CardNo) when is_atom(PaymentType) ->
 
 get_all_mer() ->
   gen_server:call(?SERVER, {get_all_mer}).
+
+
+get_mer_id_map() ->
+  gen_server:call(?SERVER, {get_mer_id_map}).
 %%--------------------------------------------------------------------
 %% @doc
 %% Starts the server
@@ -152,6 +157,17 @@ handle_call({get_all_mer}, _From, #state{mer_list_map = MerListMap} = State) ->
   MerAtomList = maps:keys(MerListMap),
   MerList = lists:map(fun(MerIdAtom) -> atom_to_binary(MerIdAtom, utf8) end, MerAtomList),
   {reply, lists:delete(?MER_ID_TEST, MerList), State};
+handle_call({get_mer_id_map}, _From, #state{mer_router_map = MerRouterMap} = State) ->
+  F = fun
+        (K, {_, [MerIdAtom]} = _V, Acc) ->
+          MerBin = atom_to_binary(MerIdAtom, utf8),
+          OldPaymentTypes = maps:get(MerBin, Acc, []),
+          maps:put(MerBin, [K | OldPaymentTypes], Acc)
+      end,
+
+  MerIdMap = maps:fold(F, #{}, MerRouterMap),
+  {reply, MerIdMap, State};
+
 handle_call(_Request, _From, State) ->
   {reply, ok, State}.
 
