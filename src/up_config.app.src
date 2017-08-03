@@ -71,7 +71,7 @@
           , {gw_wap_dzgas, {wap,['898319849000028']}}
           , {gw_netbank_trustone, {netbank,['898350249000234']}}
           , {gw_netbank_only_trustone, {netbank_only,['898350249000234']}}
-          , {gw_wap_trustone, {wap,['898350249000232']}}
+          , {gw_wap_trustone, {wap,['898350249000234']}}
         ]}
       , {up_mer_props,
         #{
