@@ -35,7 +35,6 @@
   , check_payment_method/3
   , get_all_mer/0
   , get_mer_id_map/0
-  , get_public_key/0
 
 ]).
 
@@ -76,8 +75,6 @@ get_all_mer() ->
 get_mer_id_map() ->
   gen_server:call(?SERVER, {get_mer_id_map}).
 
-get_public_key() ->
-  gen_server:call(?SERVER, {get_public_key}).
 %%--------------------------------------------------------------------
 %% @doc
 %% Starts the server
@@ -172,7 +169,7 @@ handle_call({get_mer_id_map}, _From, #state{mer_router_map = MerRouterMap} = Sta
   MerIdMap = maps:fold(F, #{}, MerRouterMap),
   {reply, MerIdMap, State};
 
-handle_call({get_mer_id_map}, _From, #state{public_key = UpPublicKey} = State) ->
+handle_call({get_public_key}, _From, #state{public_key = UpPublicKey} = State) ->
   {reply, UpPublicKey, State};
 
 handle_call(_Request, _From, State) ->
@@ -271,7 +268,7 @@ get_mer_list() ->
 get_up_public_key() ->
   PublicKeyFileName = xfutils:get_filename([home, priv_dir, up_keys_dir, up_public_key_file]),
   lager:debug("PublicKeyFileName = ~p", [PublicKeyFileName]),
-  PublicKey = xfutils:load_public_key(PublicKeyFileName),
+  {ok, PublicKey} = xfutils:load_public_key(PublicKeyFileName),
   PublicKey.
 
 do_get_config(public_key, #state{public_key = PublicKey} = State) when is_record(State, state) ->
