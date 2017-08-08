@@ -21,6 +21,7 @@
   , check_payment_method/3
   , get_mer_list/0
   , get_mer_id_map/0
+  , get_public_key/0
 
 ]).
 
@@ -76,6 +77,9 @@ get_mer_list() ->
 %%--------------------------------------------------------------------
 get_mer_id_map() ->
   gws_up_config:get_mer_id_map().
+
+get_public_key() ->
+  gws_up_config:get_public_key().
 
 %%====================================================================
 %% Internal functions

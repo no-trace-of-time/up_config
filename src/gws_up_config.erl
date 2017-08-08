@@ -35,6 +35,7 @@
   , check_payment_method/3
   , get_all_mer/0
   , get_mer_id_map/0
+  , get_public_key/0
 
 ]).
 
@@ -74,6 +75,9 @@ get_all_mer() ->
 
 get_mer_id_map() ->
   gen_server:call(?SERVER, {get_mer_id_map}).
+
+get_public_key() ->
+  gen_server:call(?SERVER, {get_public_key}).
 %%--------------------------------------------------------------------
 %% @doc
 %% Starts the server
@@ -167,6 +171,9 @@ handle_call({get_mer_id_map}, _From, #state{mer_router_map = MerRouterMap} = Sta
 
   MerIdMap = maps:fold(F, #{}, MerRouterMap),
   {reply, MerIdMap, State};
+
+handle_call({get_mer_id_map}, _From, #state{public_key = UpPublicKey} = State) ->
+  {reply, UpPublicKey, State};
 
 handle_call(_Request, _From, State) ->
   {reply, ok, State}.
