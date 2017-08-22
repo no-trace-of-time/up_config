@@ -72,6 +72,7 @@
           , {gw_netbank_trustone, {netbank,['898350249000234']}}
           , {gw_netbank_only_trustone, {netbank_only,['898350249000234']}}
           , {gw_wap_trustone, {wap,['898350249000234']}}
+          , {gw_wap_xm_232, {wap,['898350249000232']}}
         ]}
       , {up_mer_props,
         #{
