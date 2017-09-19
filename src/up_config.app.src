@@ -63,23 +63,24 @@
       , {up_public_key_file, "acp.pem"}
       , {up_mer_list,
         [
-          {gw_netbank, {netbank,['898319849000018']}}
-          , {gw_netbank_only, {netbank_only,['898319849000018']}}
-          , {gw_wap, {wap,['898319849000019']}}
-          , {gw_netbank_dzgas, {netbank,['898319849000027']}}
-          , {gw_netbank_only_dzgas, {netbank_only,['898319849000027']}}
-          , {gw_wap_dzgas, {wap,['898319849000028']}}
-          , {gw_netbank_trustone, {netbank,['898350249000234']}}
-          , {gw_netbank_only_trustone, {netbank_only,['898350249000234']}}
-          , {gw_wap_trustone, {wap,['898350249000234']}}
-          , {gw_wap_xm_232, {wap,['898350249000232']}}
+          {gw_netbank, {netbank, ['898319849000018']}}
+          , {gw_netbank_only, {netbank_only, ['898319849000018']}}
+          , {gw_wap, {wap, ['898319849000019']}}
+%%          , {gw_netbank_dzgas, {netbank,['898319849000027']}}
+%%          , {gw_netbank_only_dzgas, {netbank_only,['898319849000027']}}
+          , {gw_wap_dzgas, {wap, ['898319849000031']}}
+          , {gw_netbank_trustone, {netbank, ['898350249000234']}}
+          , {gw_netbank_only_trustone, {netbank_only, ['898350249000234']}}
+          , {gw_wap_trustone, {wap, ['898350249000234']}}
+          , {gw_wap_xm_232, {wap, ['898350249000232']}}
         ]}
       , {up_mer_props,
         #{
           '898319849000018' => #{channelType=><<"08">>, certId => <<"70481187397">>}
           , '898319849000019' => #{channelType=><<"07">>, certId => <<"70469027189">>}
-          , '898319849000027' => #{channelType=><<"08">>, certId => <<"73119901525">>}
-          , '898319849000028' => #{channelType=><<"07">>, certId => <<"73119902008">>}
+%%          , '898319849000027' => #{channelType=><<"08">>, certId => <<"73119901525">>}
+%%          , '898319849000028' => #{channelType=><<"07">>, certId => <<"73119902008">>}
+          , '898319849000031' => #{channelType=><<"07">>, certId => <<"73437360440">>}
           , '898350249000232' => #{channelType=><<"07">>, certId => <<"69567322262">>}
           , '898350249000234' => #{channelType=><<"08">>, certId => <<"69567322259">>}
           , '898350249000240' => #{channelType=><<"07">>, certId => <<"69567322249">>}
