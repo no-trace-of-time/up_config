@@ -93,6 +93,10 @@
       , {test_mcht_back_url, "http://localhost:8888/pg/mcht_back_succ_info"}
 
 
+      , {up_pay_url, "https://gateway.95516.com/gateway/api/frontTransReq.do"}
+      , {up_query_url, "https://gateway.95516.com/gateway/api/queryTrans.do"}
+      , {up_reconcile_download_url, "https://filedownload.95516.com/"}
+
     ]},
     {modules, [
       up_config
