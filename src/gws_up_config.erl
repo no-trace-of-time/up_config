@@ -264,9 +264,12 @@ get_mer_list() ->
   MerPropsMapWithPK = maps:map(F, MerPropsMap),
   MerPropsMapWithPK.
 
+get_keys_dir_config() ->
+  {ok, UpKeysDirConfig} = application:get_env(up_keys_dir),
+  UpKeysDirConfig.
 
 get_up_public_key() ->
-  PublicKeyFileName = xfutils:get_filename([home, priv_dir, up_keys_dir, up_public_key_file]),
+  PublicKeyFileName = xfutils:get_filename(get_keys_dir_config() ++ [up_public_key_file]),
   lager:debug("PublicKeyFileName = ~p", [PublicKeyFileName]),
   PublicKey = xfutils:load_public_key(PublicKeyFileName),
   PublicKey.
@@ -280,7 +283,8 @@ do_get_config(Key, _) when is_atom(Key) ->
 %%--------------------------------------------------------------------
 load_private_key(MerId) when is_atom(MerId) ->
   MerIdBin = atom_to_binary(MerId, utf8),
-  KeyPath = xfutils:get_path([home, priv_dir, up_keys_dir]),
+%%  KeyPath = xfutils:get_path([home, priv_dir, up_keys_dir]),
+  KeyPath = xfutils:get_path(get_keys_dir_config()),
   KeyFileName = list_to_binary([KeyPath, MerIdBin, ".key"]),
   lager:debug("private key file name = ~p", [KeyFileName]),
   {ok, Pwd} = application:get_env(private_key_default_pwd),
