@@ -51,7 +51,8 @@ get_mer_prop(MerId, Key) when is_binary(MerId) ->
 get_mer_prop(MerId, Key) when is_atom(MerId),
   (Key =:= channelType orelse
     Key =:= certId orelse
-    Key =:= privateKey
+    Key =:= privateKey orelse
+  Key =:= publicKey
   )
   ->
   gws_up_config:get_mer_prop(MerId, Key).

@@ -57,7 +57,8 @@ get_mer_id_default(PaymentType) when is_atom(PaymentType) ->
 get_mer_prop(MerId, Key) when is_atom(MerId),
   (Key =:= channelType orelse
     Key =:= certId orelse
-    Key =:= privateKey
+    Key =:= privateKey orelse
+    Key =:= publicKey
   )
   ->
   gen_server:call(?SERVER, {get_mer_prop, MerId, Key}).
@@ -257,8 +258,9 @@ get_mer_list() ->
         (MerId, PropMap) when is_atom(MerId), is_map(PropMap) ->
 %%          lager:debug("maps origal = ~p", [PropMap]),
           PrivateKey = load_private_key(MerId),
-          MapsRet = maps:put(privateKey, PrivateKey, PropMap),
-%%          lager:debug("maps with pk = ~p", [MapsRet]),
+          PublicKey = load_public_key(MerId),
+          MapsRet1 = maps:put(privateKey, PrivateKey, PropMap),
+          MapsRet = maps:put(publicKey, PublicKey, MapsRet1),
           MapsRet
       end,
   MerPropsMapWithPK = maps:map(F, MerPropsMap),
@@ -281,16 +283,50 @@ do_get_config(Key, _) when is_atom(Key) ->
   Value.
 
 %%--------------------------------------------------------------------
-load_private_key(MerId) when is_atom(MerId) ->
+key_file_name(MerId, Type)
+  when is_atom(MerId), is_atom(Type)
+  , ((Type =:= private) or (Type =:= public)) ->
   MerIdBin = atom_to_binary(MerId, utf8),
-%%  KeyPath = xfutils:get_path([home, priv_dir, up_keys_dir]),
   KeyPath = xfutils:get_path(get_keys_dir_config()),
-  KeyFileName = list_to_binary([KeyPath, MerIdBin, ".key"]),
+  Ext = case Type of
+          private ->
+            ".key";
+          public ->
+            ".pub"
+        end,
+  KeyFileName = list_to_binary([KeyPath, MerIdBin, Ext]),
+  KeyFileName.
+
+%%--------------------------------------------------------------------
+load_private_key(MerId) when is_atom(MerId) ->
+  KeyFileName = key_file_name(MerId, private),
   lager:debug("private key file name = ~p", [KeyFileName]),
   {ok, Pwd} = application:get_env(private_key_default_pwd),
-  PrivateKey = xfutils:load_private_key(KeyFileName, Pwd),
+  PrivateKey = try
+                 xfutils:load_private_key(KeyFileName, Pwd)
+               catch
+                 error:noent ->
+                   lager:error("Could not file file ~p", [KeyFileName]),
+                   <<>>;
+                 _:_ ->
+                   lager:error("load private key from ~p failed!set it to <<>>", [KeyFileName]),
+
+                   <<>>
+               end,
   PrivateKey.
 
+%%--------------------------------------------------------------------
+load_public_key(MerId) when is_atom(MerId) ->
+  KeyFileName = key_file_name(MerId, public),
+  lager:debug("public key file name = ~p", [KeyFileName]),
+  PublicKey = try
+                xfutils:load_public_key(KeyFileName,rsa)
+              catch
+                _:_ ->
+                  lager:error("load public key from ~p failed!set it to <<>>", [KeyFileName]),
+                  <<>>
+              end,
+  PublicKey.
 %%--------------------------------------------------------------------
 get_bank_dict() ->
   {ok, BankIdList} = application:get_env(netbank_only_list_all),
