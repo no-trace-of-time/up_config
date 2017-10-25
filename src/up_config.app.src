@@ -62,6 +62,7 @@
       , {up_keys_dir_sub, "/keys"}
       , {up_keys_dir, [priv, up_keys_dir_sub]}
       , {up_public_key_file, "acp.pem"}
+      , {up_senstive_info_key_file, "sens_enc.cer"}
       , {up_mer_list,
         [
           {gw_netbank, {netbank, ['898319849000018']}}

@@ -11,6 +11,7 @@
 %%%-------------------------------------------------------------------
 -module(gws_up_config).
 -include_lib("eunit/include/eunit.hrl").
+-include_lib("public_key/include/public_key.hrl").
 -author("simon").
 
 -behaviour(gen_server).
@@ -41,10 +42,15 @@
 -define(SERVER, ?MODULE).
 -define(MER_ID_TEST, <<"test">>).
 
--record(state, {bank_id_dict, mer_router_map, mer_list_map, public_key}).
+-record(state, {bank_id_dict, mer_router_map, mer_list_map, public_key, sens_public_key}).
 
--compile(export_all).
+%% test func
+-export([
+  get_up_sens_public_key_test_1/0
+]).
+%%-compile(export_all).
 
+-define(APP, up_config).
 %%%===================================================================
 %%% API
 %%%===================================================================
@@ -65,6 +71,7 @@ get_mer_prop(MerId, Key) when is_atom(MerId),
 
 get_config(Key) when is_atom(Key) ->
   gen_server:call(?SERVER, {get_config, Key}).
+
 
 check_payment_method(PaymentType, BankId, CardNo) when is_atom(PaymentType) ->
   gen_server:call(?SERVER, {check_payment_method, PaymentType, BankId, CardNo}).
@@ -111,6 +118,7 @@ init([]) ->
     , mer_router_map = get_route()
     , mer_list_map = get_mer_list()
     , public_key = get_up_public_key()
+    , sens_public_key = get_up_sens_public_key()
   },
   lager:debug("~p get env config = ~p", [?SERVER, State]),
   {ok, State}.
@@ -247,12 +255,12 @@ get_env() ->
   maps:from_list(EnvList).
 
 get_route() ->
-  {ok, UpMerList} = application:get_env(up_mer_list),
+  {ok, UpMerList} = application:get_env(?APP, up_mer_list),
   maps:from_list(UpMerList).
 
 
 get_mer_list() ->
-  {ok, MerPropsMap} = application:get_env(up_mer_props),
+  {ok, MerPropsMap} = application:get_env(?APP, up_mer_props),
 %%  lager:debug("maps origal = ~p", [MerPropsMap]),
   F = fun
         (MerId, PropMap) when is_atom(MerId), is_map(PropMap) ->
@@ -267,7 +275,7 @@ get_mer_list() ->
   MerPropsMapWithPK.
 
 get_keys_dir_config() ->
-  {ok, UpKeysDirConfig} = application:get_env(up_keys_dir),
+  {ok, UpKeysDirConfig} = application:get_env(?APP, up_keys_dir),
   UpKeysDirConfig.
 
 get_up_public_key() ->
@@ -278,9 +286,30 @@ get_up_public_key() ->
 
 do_get_config(public_key, #state{public_key = PublicKey} = State) when is_record(State, state) ->
   PublicKey;
+do_get_config(sens_public_key, #state{sens_public_key = PublicKey} = State) when is_record(State, state) ->
+  PublicKey;
 do_get_config(Key, _) when is_atom(Key) ->
-  {ok, Value} = application:get_env(Key),
+  {ok, Value} = application:get_env(?APP, Key),
   Value.
+
+%%--------------------------------------------------------------------
+get_up_sens_public_key() ->
+  SensCertFileName = xfutils:get_filename(?APP, get_keys_dir_config() ++ [up_senstive_info_key_file]),
+  {ok, PemBin} = file:read_file(SensCertFileName),
+  PemEntries = public_key:pem_decode(PemBin),
+  {value, CertEntry} = lists:keysearch('Certificate', 1, PemEntries),
+  {_, DerCert, _} = CertEntry,
+  Decoded = public_key:pkix_decode_cert(DerCert, otp),
+  PublicKey = Decoded#'OTPCertificate'.tbsCertificate#'OTPTBSCertificate'.subjectPublicKeyInfo#'OTPSubjectPublicKeyInfo'.subjectPublicKey,
+  PublicKey.
+
+get_up_sens_public_key_test_1() ->
+  Exp = {'RSAPublicKey',
+    26498026181949615086704577492793793837096612371985151086321328135922819361109340628655420170959038464619546023425402467728494575424306644941762193674523038253496443066500762638016208157503693033722201345670060030154552022430306033379156134032259876237571695399953075720784810879206128658921823604775469799580057927887903699759530869046017778223001727580248700229036435343237290475081383723336378046334266674778452008148955243850576767610192103008571774092703213471102192079603521811979763951695945896880111642868487339003629341023335340884665844452777420486215897391950795441041012780384297732635820627058446052697737,
+    65537},
+  ?assertEqual(Exp, get_up_sens_public_key()),
+  ok.
+
 
 %%--------------------------------------------------------------------
 key_file_name(MerId, Type)
@@ -301,7 +330,7 @@ key_file_name(MerId, Type)
 load_private_key(MerId) when is_atom(MerId) ->
   KeyFileName = key_file_name(MerId, private),
   lager:debug("private key file name = ~p", [KeyFileName]),
-  {ok, Pwd} = application:get_env(private_key_default_pwd),
+  {ok, Pwd} = application:get_env(?APP, private_key_default_pwd),
   PrivateKey = try
                  xfutils:load_private_key(KeyFileName, Pwd)
                catch
@@ -320,7 +349,7 @@ load_public_key(MerId) when is_atom(MerId) ->
   KeyFileName = key_file_name(MerId, public),
   lager:debug("public key file name = ~p", [KeyFileName]),
   PublicKey = try
-                xfutils:load_public_key(KeyFileName,rsa)
+                xfutils:load_public_key(KeyFileName, rsa)
               catch
                 _:_ ->
                   lager:error("load public key from ~p failed!set it to <<>>", [KeyFileName]),
@@ -329,7 +358,7 @@ load_public_key(MerId) when is_atom(MerId) ->
   PublicKey.
 %%--------------------------------------------------------------------
 get_bank_dict() ->
-  {ok, BankIdList} = application:get_env(netbank_only_list_all),
+  {ok, BankIdList} = application:get_env(?APP, netbank_only_list_all),
   BankIdDict = new_bankid_dict(BankIdList),
   BankIdDict.
 
