@@ -10,8 +10,8 @@
 %%% Created : 20. 七月 2017 9:02
 %%%-------------------------------------------------------------------
 -module(gws_up_config).
--include_lib("eunit/include/eunit.hrl").
 -include_lib("public_key/include/public_key.hrl").
+-include_lib("eunit/include/eunit.hrl").
 -author("simon").
 
 -behaviour(gen_server).
@@ -42,7 +42,7 @@
 -define(SERVER, ?MODULE).
 -define(MER_ID_TEST, <<"test">>).
 
--record(state, {bank_id_dict, mer_router_map, mer_list_map, public_key, sens_public_key}).
+-record(state, {bank_id_dict, mer_router_map, mer_list_map, public_key, sens_public_key, encrypt_cert_id}).
 
 %% test func
 -export([
@@ -119,6 +119,7 @@ init([]) ->
     , mer_list_map = get_mer_list()
     , public_key = get_up_public_key()
     , sens_public_key = get_up_sens_public_key()
+    , encrypt_cert_id = get_up_encrypt_cert_id()
   },
   lager:debug("~p get env config = ~p", [?SERVER, State]),
   {ok, State}.
@@ -286,8 +287,10 @@ get_up_public_key() ->
 
 do_get_config(public_key, #state{public_key = PublicKey} = State) when is_record(State, state) ->
   PublicKey;
-do_get_config(sens_public_key, #state{sens_public_key = PublicKey} = State) when is_record(State, state) ->
-  PublicKey;
+do_get_config(sens_public_key, #state{sens_public_key = SensPublicKey} = State) when is_record(State, state) ->
+  SensPublicKey;
+do_get_config(encrypt_cert_id, #state{encrypt_cert_id = EncryptCertId} = State) when is_record(State, state) ->
+  EncryptCertId;
 do_get_config(Key, _) when is_atom(Key) ->
   {ok, Value} = application:get_env(?APP, Key),
   Value.
@@ -311,6 +314,10 @@ get_up_sens_public_key_test_1() ->
   ok.
 
 
+%%--------------------------------------------------------------------
+get_up_encrypt_cert_id() ->
+  {ok, EncryptCertId} = application:get_env(?APP, encrypt_cert_id),
+  EncryptCertId.
 %%--------------------------------------------------------------------
 key_file_name(MerId, Type)
   when is_atom(MerId), is_atom(Type)

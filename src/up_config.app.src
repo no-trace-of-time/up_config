@@ -63,6 +63,7 @@
       , {up_keys_dir, [priv, up_keys_dir_sub]}
       , {up_public_key_file, "acp.pem"}
       , {up_senstive_info_key_file, "sens_enc.cer"}
+      , {encrypt_cert_id, <<"68759622183">>}
       , {up_mer_list,
         [
           {gw_netbank, {netbank, ['898319849000018']}}
@@ -87,6 +88,7 @@
           , '898350249000234'=>#{channelType=><<"08">>, certId=><<"40220995861346480087409489142384722381">>}
           , '898350249000240'=>#{channelType=><<"07">>, certId=><<"40220995861346480087409489142384722381">>}
           , '898319849000017'=>#{channelType=><<"07">>, certId=><<"70481187397">>}
+          , '777290058110097'=>#{channelType=><<"07">>, certId=><<"">>}
         }}
       , {pg_front_url, <<"http://localhost:8888/pg/pay_succ">>}
       , {pg_back_url, <<"http://localhost:8888/pg/pay_succ_info">>}
@@ -94,17 +96,17 @@
       , {test_mcht_back_url, <<"http://localhost:8888/pg/mcht_back_succ_info">>}
 
 
-      , {up_pay_url, <<"https://gateway.95516.com/gateway/api/frontTransReq.do">>}
-      , {up_query_url, <<"https://gateway.95516.com/gateway/api/queryTrans.do">>}
-      , {up_reconcile_download_url, <<"https://filedownload.95516.com/">>}
-      , {up_collect_url, <<"https://gateway.95516.com/gateway/api/backTransReq.do">>}
+      , {up_pay_url, <<"https://gateway.test.95516.com/gateway/api/frontTransReq.do">>}
+      , {up_query_url, <<"https://gateway.test.95516.com/gateway/api/queryTrans.do">>}
+      , {up_reconcile_download_url, <<"https://filedownload.test.95516.com/">>}
+      , {up_collect_url, <<"https://gateway.test.95516.com/gateway/api/backTransReq.do">>}
 
-      , {up_front_url, <<"https://gateway.95516.com/gateway/api/frontTransReq.do">>}
-      , {up_back_url, <<"https://gateway.95516.com/gateway/api/backTransReq.do">>}
-      , {up_batch_url, <<"https://gateway.95516.com/gateway/api/batchTransReq.do">>}
-      , {up_file_url, <<"https://filedownload.95516.com/">>}
-      , {up_app_url, <<"https://gateway.95516.com/gateway/api/appTransReq.do">>}
-      , {up_card_url, <<"https://gateway.95516.com/gateway/api/cardTransReq.do">>}
+      , {up_front_url, <<"https://gateway.test.95516.com/gateway/api/frontTransReq.do">>}
+      , {up_back_url, <<"https://gateway.test.95516.com/gateway/api/backTransReq.do">>}
+      , {up_batch_url, <<"https://gateway.test.95516.com/gateway/api/batchTransReq.do">>}
+      , {up_file_url, <<"https://filedownload.test.95516.com/">>}
+      , {up_app_url, <<"https://gateway.test.95516.com/gateway/api/appTransReq.do">>}
+      , {up_card_url, <<"https://gateway.test.95516.com/gateway/api/cardTransReq.do">>}
 
     ]},
     {modules, [
