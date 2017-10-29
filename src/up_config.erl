@@ -41,10 +41,10 @@ stop(_State) ->
   ok.
 
 get_mer_id(PaymentType) when is_atom(PaymentType) ->
-  gws_up_config:get_mer_id(PaymentType).
+  up_config_gen_server:get_mer_id(PaymentType).
 
 get_mer_id_default(PaymentType) when is_atom(PaymentType) ->
-  gws_up_config:get_mer_id_default(PaymentType).
+  up_config_gen_server:get_mer_id_default(PaymentType).
 
 %%--------------------------------------------------------------------
 -spec get_mer_prop(MerId, Key) -> any() when
@@ -60,11 +60,11 @@ get_mer_prop(MerId, Key) when is_atom(MerId),
     Key =:= publicKey
   )
   ->
-  gws_up_config:get_mer_prop(MerId, Key).
+  up_config_gen_server:get_mer_prop(MerId, Key).
 
 %%--------------------------------------------------------------------
 get_config(Key) when is_atom(Key) ->
-  gws_up_config:get_config(Key).
+  up_config_gen_server:get_config(Key).
 
 
 get_config_test_1() ->
@@ -80,15 +80,15 @@ get_config_test_1() ->
   Result :: ok| error.
 
 check_payment_method(PaymentType, BankIdBin, CardNo) when is_atom(PaymentType) ->
-  gws_up_config:check_payment_method(PaymentType, BankIdBin, CardNo).
+  up_config_gen_server:check_payment_method(PaymentType, BankIdBin, CardNo).
 
 %%--------------------------------------------------------------------
 get_mer_list() ->
-  gws_up_config:get_all_mer().
+  up_config_gen_server:get_all_mer().
 
 %%--------------------------------------------------------------------
 get_mer_id_map() ->
-  gws_up_config:get_mer_id_map().
+  up_config_gen_server:get_mer_id_map().
 
 
 %%====================================================================

@@ -112,7 +112,7 @@
     {modules, [
       up_config
       , up_config_sup
-      , gws_up_config
+      , up_config_gen_server
     ]},
 
     {maintainers, []},

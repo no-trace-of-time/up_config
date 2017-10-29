@@ -42,7 +42,7 @@ my_test_() ->
     {
       inorder,
       [
-        fun gws_up_config:get_up_sens_public_key_test_1/0
+        fun up_config_gen_server:get_up_sens_public_key_test_1/0
 %%        , fun up_config:get_config_test_1/0
       ]
     }

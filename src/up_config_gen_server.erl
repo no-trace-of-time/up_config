@@ -9,7 +9,7 @@
 %%% @end
 %%% Created : 20. 七月 2017 9:02
 %%%-------------------------------------------------------------------
--module(gws_up_config).
+-module(up_config_gen_server).
 -include_lib("public_key/include/public_key.hrl").
 -include_lib("eunit/include/eunit.hrl").
 -author("simon").
