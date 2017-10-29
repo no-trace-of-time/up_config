@@ -30,7 +30,7 @@ start_link() ->
 %% Child :: {Id,StartFunc,Restart,Shutdown,Type,Modules}
 init([]) ->
   Children = [
-    xfutils:child_spec(gws_up_config)
+    xfutils:child_spec(up_config_gen_sever)
   ],
   RestartStrategy = xfutils:sup_restart_strategy(),
   {ok, {RestartStrategy, Children}}.
