@@ -42,7 +42,15 @@
 -define(SERVER, ?MODULE).
 -define(MER_ID_TEST, <<"test">>).
 
--record(state, {bank_id_dict, mer_router_map, mer_list_map, public_key, sens_public_key, encrypt_cert_id}).
+-record(state, {
+  bank_id_dict
+  , mer_router_map
+  , mer_list_map
+  , public_key
+  , sens_public_key
+  , encrypt_cert_id
+  , sign_version
+}).
 
 %% test func
 -export([
@@ -121,6 +129,7 @@ init([]) ->
     , public_key = get_up_public_key()
     , sens_public_key = get_up_sens_public_key()
     , encrypt_cert_id = get_up_encrypt_cert_id()
+    , sign_version = get_up_sign_version()
   },
   lager:debug("~p get env config = ~p", [?SERVER, State]),
   {ok, State}.
@@ -286,12 +295,14 @@ get_up_public_key() ->
   PublicKey = xfutils:load_public_key(PublicKeyFileName),
   PublicKey.
 
-do_get_config(public_key, #state{public_key = PublicKey} = State) when is_record(State, state) ->
-  PublicKey;
-do_get_config(sens_public_key, #state{sens_public_key = SensPublicKey} = State) when is_record(State, state) ->
-  SensPublicKey;
-do_get_config(encrypt_cert_id, #state{encrypt_cert_id = EncryptCertId} = State) when is_record(State, state) ->
-  EncryptCertId;
+do_get_config(public_key, #state{public_key = Value} = State) when is_record(State, state) ->
+  Value;
+do_get_config(sens_public_key, #state{sens_public_key = Value} = State) when is_record(State, state) ->
+  Value;
+do_get_config(encrypt_cert_id, #state{encrypt_cert_id = Value} = State) when is_record(State, state) ->
+  Value;
+do_get_config(sign_version, #state{sign_version = Value} = State) when is_record(State, state) ->
+  Value;
 do_get_config(Key, _) when is_atom(Key) ->
   {ok, Value} = application:get_env(?APP, Key),
   Value.
@@ -319,6 +330,10 @@ get_up_sens_public_key_test_1() ->
 get_up_encrypt_cert_id() ->
   {ok, EncryptCertId} = application:get_env(?APP, encrypt_cert_id),
   EncryptCertId.
+%%--------------------------------------------------------------------
+get_up_sign_version() ->
+  {ok, SignVersion} = application:get_env(?APP, sign_version),
+  SignVersion.
 %%--------------------------------------------------------------------
 key_file_name(MerId, Type)
   when is_atom(MerId), is_atom(Type)
