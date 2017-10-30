@@ -6,8 +6,13 @@
     {applications,
       [kernel,
         stdlib
+        , syntax_tools
+        , goldrush
         , lager
       ]},
+    {included_applications, [
+      goldrush, lager
+    ]},
     {env, [
       {netbank_only_list_all,
         [
@@ -112,7 +117,7 @@
     {modules, [
       up_config
       , up_config_sup
-      , up_config_gen_server
+      , up_config_svr
     ]},
 
     {maintainers, []},

@@ -14,7 +14,11 @@
 -export([]).
 
 setup() ->
-  application:start(up_config),
+  ok = application:start(compiler),
+  ok = application:start(syntax_tools),
+  ok = application:start(goldrush),
+  ok = application:start(lager),
+  ok = application:start(up_config),
 
   env_init(),
   ok.
@@ -42,8 +46,13 @@ my_test_() ->
     {
       inorder,
       [
-        fun up_config_gen_server:get_up_sens_public_key_test_1/0
+        fun get_mer_prop_test_1/0,
+        fun up_config_svr:get_up_sens_public_key_test_1/0
 %%        , fun up_config:get_config_test_1/0
       ]
     }
   }.
+
+get_mer_prop_test_1() ->
+  ?assertEqual(<<"07">>, up_config:get_mer_prop('777290058110097', channelType)),
+  ok.

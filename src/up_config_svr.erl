@@ -9,7 +9,7 @@
 %%% @end
 %%% Created : 20. 七月 2017 9:02
 %%%-------------------------------------------------------------------
--module(up_config_gen_server).
+-module(up_config_svr).
 -include_lib("public_key/include/public_key.hrl").
 -include_lib("eunit/include/eunit.hrl").
 -author("simon").
@@ -92,6 +92,7 @@ get_mer_id_map() ->
 -spec(start_link() ->
   {ok, Pid :: pid()} | ignore | {error, Reason :: term()}).
 start_link() ->
+  io:format("===================================", []),
   gen_server:start_link({local, ?SERVER}, ?MODULE, [], []).
 
 %%%===================================================================
@@ -262,10 +263,10 @@ get_route() ->
 
 get_mer_list() ->
   {ok, MerPropsMap} = application:get_env(?APP, up_mer_props),
-%%  lager:debug("maps origal = ~p", [MerPropsMap]),
+  lager:debug("maps origal = ~p", [MerPropsMap]),
   F = fun
         (MerId, PropMap) when is_atom(MerId), is_map(PropMap) ->
-%%          lager:debug("maps origal = ~p", [PropMap]),
+          lager:debug("MerId = ~p,maps origal = ~p", [MerId, PropMap]),
           PrivateKey = load_private_key(MerId),
           PublicKey = load_public_key(MerId),
           MapsRet1 = maps:put(privateKey, PrivateKey, PropMap),
