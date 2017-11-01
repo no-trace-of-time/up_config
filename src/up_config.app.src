@@ -10,9 +10,9 @@
         , goldrush
         , lager
       ]},
-    {included_applications, [
-      goldrush, lager
-    ]},
+%%    {included_applications, [
+%%      goldrush, lager
+%%    ]},
     {env, [
       {netbank_only_list_all,
         [
