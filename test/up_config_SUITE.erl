@@ -47,8 +47,9 @@ my_test_() ->
       inorder,
       [
         fun get_mer_prop_test_1/0,
-        fun up_config_svr:get_up_sens_public_key_test_1/0
+        fun up_config_svr:get_up_sens_public_key_test_1/0,
 %%        , fun up_config:get_config_test_1/0
+        fun sign_verify_test_1/0
       ]
     }
   }.
@@ -56,3 +57,19 @@ my_test_() ->
 get_mer_prop_test_1() ->
   ?assertEqual(<<"07">>, up_config:get_mer_prop('777290058110097', channelType)),
   ok.
+
+sign_verify_test_1() ->
+  ?assertEqual(true, sign_verify_mer('777290058110097')),
+  ?assertEqual(true, sign_verify_mer('898319849000017')),
+  ok.
+
+sign_verify_mer(MerId) when is_atom(MerId) ->
+  PK = up_config:get_mer_prop(MerId, privateKey),
+  PubK = up_config:get_mer_prop(MerId, publicKey),
+  Msg = <<"aaa">>,
+  %% digest
+  DigestBin = crypto:hash('sha',Msg),
+  DigestHex = xfutils:bin_to_hex(DigestBin),
+  DigestString = list_to_binary(string:to_lower(binary_to_list(DigestHex))),
+  Sig = public_key:sign(DigestString, 'sha', PK),
+  public_key:verify(DigestString, sha, Sig, PubK).
