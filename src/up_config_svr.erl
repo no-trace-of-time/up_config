@@ -316,6 +316,7 @@ get_up_sens_public_key() ->
   {_, DerCert, _} = CertEntry,
   Decoded = public_key:pkix_decode_cert(DerCert, otp),
   PublicKey = Decoded#'OTPCertificate'.tbsCertificate#'OTPTBSCertificate'.subjectPublicKeyInfo#'OTPSubjectPublicKeyInfo'.subjectPublicKey,
+  lager:info("Read sens info public key from ~p ok", [SensCertFileName]),
   PublicKey.
 
 get_up_sens_public_key_test_1() ->
