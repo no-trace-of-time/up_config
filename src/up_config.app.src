@@ -110,7 +110,7 @@
 
       , {up_front_url, <<"https://gateway.test.95516.com/gateway/api/frontTransReq.do">>}
       , {up_back_url, <<"https://gateway.test.95516.com/gateway/api/backTransReq.do">>}
-      , {up_batch_url, <<"https://gateway.test.95516.com/gateway/api/batchTransReq.do">>}
+      , {up_batch_url, <<"https://gateway.test.95516.com/gateway/api/batchTrans.do">>}
       , {up_file_url, <<"https://filedownload.test.95516.com/">>}
       , {up_app_url, <<"https://gateway.test.95516.com/gateway/api/appTransReq.do">>}
       , {up_card_url, <<"https://gateway.test.95516.com/gateway/api/cardTransReq.do">>}
