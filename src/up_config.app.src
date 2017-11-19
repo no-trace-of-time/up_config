@@ -98,7 +98,10 @@
           , '777290058110097'=>#{channelType=><<"07">>, certId=><<"68759663125">>}
         }}
       , {pg_front_url, <<"http://localhost:8888/pg/pay_succ">>}
-      , {pg_back_url, <<"http://localhost:8888/pg/pay_succ_info">>}
+      , {pg_back_url, <<"http://test.trust-one.com:8890/pg/pay_succ_info">>}
+      , {pg_collect_back_url, <<"http://test.trust-one.com:8890/pg/pay_succ_info">>}
+      , {pg_batch_collect_back_url, <<"http://test.trust-one.com:8890/pg/pay_succ_info">>}
+
       , {test_mcht_front_url, <<"http://localhost:8888/pg/mcht_front_succ">>}
       , {test_mcht_back_url, <<"http://localhost:8888/pg/mcht_back_succ_info">>}
 
