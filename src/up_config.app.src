@@ -100,8 +100,8 @@
       , {pg_front_url, <<"http://localhost:8888/pg/pay_succ">>}
       , {pg_back_url, <<"http://test.trust-one.com:8890/pg/pay_succ_info">>}
       , {pg_pay_back_url, <<"http://test.trust-one.com:8890/pg/pay_succ_info">>}
-      , {pg_collect_back_url, <<"http://test.trust-one.com:8890/pg/pay_succ_info">>}
-      , {pg_batch_collect_back_url, <<"http://test.trust-one.com:8890/pg/pay_succ_info">>}
+      , {pg_collect_back_url, <<"http://test.trust-one.com:8890/pg/info_collect">>}
+      , {pg_batch_collect_back_url, <<"http://test.trust-one.com:8890/pg/info_batch_collect">>}
 
       , {test_mcht_front_url, <<"http://localhost:8888/pg/mcht_front_succ">>}
       , {test_mcht_back_url, <<"http://localhost:8888/pg/mcht_back_succ_info">>}
